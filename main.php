@@ -1,6 +1,6 @@
 <?php
 
-class Animal
+abstract class Animal
 {
     public $regNumber;
     public $product;
@@ -13,7 +13,6 @@ class Animal
 
 class Cow extends Animal
 {
-    public $type = 'Cow';
     public $product = 'Milk';
 
     public function getProduct()
@@ -24,7 +23,6 @@ class Cow extends Animal
 
 class Chicken extends Animal
 {
-    public $type = 'Chicken';
     public $product = 'Egg';
 
     public function getProduct()
@@ -42,7 +40,8 @@ class Farm
     public function addAnimal(Animal $animal)
     {
         $animal->regNumber = $this->idLastAnimal++;
-        $this->animals[$animal->type][] = $animal;
+        $typeAnimal = get_class($animal);
+        $this->animals[$typeAnimal][] = $animal;
     }
 
     public function getCountAnimals()
@@ -56,7 +55,10 @@ class Farm
 
     public function getProducts()
     {
+        $this->products = [];
+    
         foreach($this->animals as $type) {
+            $this->products[$type[0]->product] = 0;
             foreach($type as $animal) {
                 $this->products[$animal->product] += $animal->getProduct();
             }
@@ -70,11 +72,6 @@ class Farm
         return $this->products;
     }
 
-    public function clearStorage()
-    {
-        $this->products = [];
-        return;
-    }
 }
 
 
@@ -118,8 +115,6 @@ $allAnimals = $farm->getCountAnimals();
 var_dump($allAnimals);
 
 //Снова 7 раз (неделю) производим сбор продукции и выводим результат на экран.
-//Очищаем склад
-$farm->clearStorage();
 
 for( $i=0; $i < 7; $i++ ) {
     $farm->getProducts();
@@ -127,5 +122,7 @@ for( $i=0; $i < 7; $i++ ) {
 
 $collectedProduct = $farm->getCollectedProducts();
 var_dump($collectedProduct);
+
+
 
 ?>
